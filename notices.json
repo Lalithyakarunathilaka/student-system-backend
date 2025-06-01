@@ -1,0 +1,28 @@
+[
+  {
+    "title": "Lost & Found Items",
+    "description": "A pair of black shoes and a red water bottle have been found in the playground.",
+    "category": "Announcement",
+    "date": "2024-01-02T12:00:00.000Z"
+  },
+  {
+    "title": "End Year School Cleaning Day",
+    "description": "The Shramadhana campaign will be held on January 20, 2024.",
+    "category": "Announcement",
+    "date": "2025-02-20T18:30:22.512Z"
+  },
+  {
+    "id": 1740219332971,
+    "title": "Parents Meeting",
+    "description": "This is about parents meeting",
+    "category": "Announcement",
+    "date": "2025-02-22T10:15:32.971Z"
+  },
+  {
+    "id": 1748711807527,
+    "title": "notice",
+    "description": "about someting",
+    "category": "Notice",
+    "date": "2025-05-31T17:16:47.527Z"
+  }
+]

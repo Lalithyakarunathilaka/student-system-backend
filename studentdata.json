@@ -1,0 +1,52 @@
+[
+  {"id": 1, "name": "Alice", "grade": 6, "className": "6-A", "marks": [
+      {"subject": "Math", "term": "Term 1", "mark": 85}, {"subject": "Math", "term": "Term 2", "mark": 78},
+      {"subject": "Science", "term": "Term 1", "mark": 90}, {"subject": "Science", "term": "Term 2", "mark": 82},
+      {"subject": "English", "term": "Term 1", "mark": 88}, {"subject": "English", "term": "Term 2", "mark": 85}
+  ]},
+  {"id": 2, "name": "Bob", "grade": 6, "className": "6-B", "marks": [
+      {"subject": "Math", "term": "Term 1", "mark": 72}, {"subject": "Math", "term": "Term 2", "mark": 74},
+      {"subject": "Science", "term": "Term 1", "mark": 85}, {"subject": "Science", "term": "Term 2", "mark": 80},
+      {"subject": "English", "term": "Term 1", "mark": 78}, {"subject": "English", "term": "Term 2", "mark": 80}
+  ]},
+  {"id": 3, "name": "Charlie", "grade": 6, "className": "6-C", "marks": [
+      {"subject": "Math", "term": "Term 1", "mark": 88}, {"subject": "Math", "term": "Term 2", "mark": 92},
+      {"subject": "Science", "term": "Term 1", "mark": 80}, {"subject": "Science", "term": "Term 2", "mark": 85},
+      {"subject": "English", "term": "Term 1", "mark": 85}, {"subject": "English", "term": "Term 2", "mark": 88}
+  ]},
+  {"id": 4, "name": "David", "grade": 6, "className": "6-A", "marks": [
+      {"subject": "Math", "term": "Term 1", "mark": 75}, {"subject": "Math", "term": "Term 2", "mark": 79},
+      {"subject": "Science", "term": "Term 1", "mark": 88}, {"subject": "Science", "term": "Term 2", "mark": 86},
+      {"subject": "English", "term": "Term 1", "mark": 82}, {"subject": "English", "term": "Term 2", "mark": 85}
+  ]},
+  {"id": 5, "name": "Eva", "grade": 6, "className": "6-B", "marks": [
+      {"subject": "Math", "term": "Term 1", "mark": 80}, {"subject": "Math", "term": "Term 2", "mark": 82},
+      {"subject": "Science", "term": "Term 1", "mark": 87}, {"subject": "Science", "term": "Term 2", "mark": 85},
+      {"subject": "English", "term": "Term 1", "mark": 84}, {"subject": "English", "term": "Term 2", "mark": 86}
+  ]},
+  {"id": 6, "name": "Frank", "grade": 6, "className": "6-C", "marks": [
+      {"subject": "Math", "term": "Term 1", "mark": 78}, {"subject": "Math", "term": "Term 2", "mark": 80},
+      {"subject": "Science", "term": "Term 1", "mark": 82}, {"subject": "Science", "term": "Term 2", "mark": 84},
+      {"subject": "English", "term": "Term 1", "mark": 80}, {"subject": "English", "term": "Term 2", "mark": 82}
+  ]},
+  {"id": 7, "name": "Grace", "grade": 6, "className": "6-A", "marks": [
+      {"subject": "Math", "term": "Term 1", "mark": 85}, {"subject": "Math", "term": "Term 2", "mark": 88},
+      {"subject": "Science", "term": "Term 1", "mark": 89}, {"subject": "Science", "term": "Term 2", "mark": 87},
+      {"subject": "English", "term": "Term 1", "mark": 90}, {"subject": "English", "term": "Term 2", "mark": 89}
+  ]},
+  {"id": 8, "name": "Hannah", "grade": 6, "className": "6-B", "marks": [
+      {"subject": "Math", "term": "Term 1", "mark": 77}, {"subject": "Math", "term": "Term 2", "mark": 80},
+      {"subject": "Science", "term": "Term 1", "mark": 84}, {"subject": "Science", "term": "Term 2", "mark": 85},
+      {"subject": "English", "term": "Term 1", "mark": 82}, {"subject": "English", "term": "Term 2", "mark": 83}
+  ]},
+  {"id": 9, "name": "Ian", "grade": 6, "className": "6-C", "marks": [
+      {"subject": "Math", "term": "Term 1", "mark": 90}, {"subject": "Math", "term": "Term 2", "mark": 92},
+      {"subject": "Science", "term": "Term 1", "mark": 89}, {"subject": "Science", "term": "Term 2", "mark": 88},
+      {"subject": "English", "term": "Term 1", "mark": 91}, {"subject": "English", "term": "Term 2", "mark": 90}
+  ]},
+  {"id": 10, "name": "Amal", "grade": 6, "className": "6-B", "marks": [
+    {"subject": "Math", "term": "Term 1", "mark": 90}, {"subject": "Math", "term": "Term 2", "mark": 60},
+    {"subject": "Science", "term": "Term 1", "mark": 89}, {"subject": "Science", "term": "Term 2", "mark": 88},
+    {"subject": "English", "term": "Term 1", "mark": 91}, {"subject": "English", "term": "Term 2", "mark": 90}
+]}
+]
