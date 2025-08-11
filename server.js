@@ -16,6 +16,18 @@ if (!fs.existsSync(noticesFilePath)) {
     fs.writeFileSync(noticesFilePath, JSON.stringify([]));
 }
 
+const mysql = require("mysql2/promise");
+
+const pool = mysql.createPool({
+  host: "localhost",
+  user: "root",
+  password: "lalithya",
+  database: "school_management_system",
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+});
+
 // get student data 
 app.get("/api/students", (req, res) => {
     fs.readFile(dataFilePath, "utf8", (err, data) => {
@@ -116,6 +128,62 @@ app.delete("/api/deleteNotice/:id", (req, res) => {
         });
     });
 });
+
+  
+app.post("/api/admin-register", async (req, res) => {
+    const { name, email, password } = req.body;
+  
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: "Name, email and password are required" });
+    }
+  
+    try {
+      // Check if email already exists
+      const [rows] = await pool.query("SELECT id FROM admin WHERE email = ?", [email]);
+      if (rows.length > 0) {
+        return res.status(400).json({ error: "Email already registered" });
+      }
+  
+      // Insert new admin
+      await pool.query(
+        "INSERT INTO admin(name, email, password) VALUES (?, ?, ?)",
+        [name, email, password]  // Reminder: hash password before saving in production
+      );
+  
+      res.status(201).json({ message: "Admin registered successfully" });
+    } catch (error) {
+      console.error("MySQL error during registration:", error);
+      res.status(500).json({ error: "Database error" });
+    }
+  });
+  
+  app.post("/api/admin-login", async (req, res) => {
+    const { email, password } = req.body;
+  
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
+    }
+  
+    try {
+      const [rows] = await pool.query(
+        "SELECT * FROM admin WHERE email = ? AND password = ?",
+        [email, password]  // Reminder: use hashed password comparison in real apps
+      );
+  
+      if (rows.length === 0) {
+        return res.status(401).json({ error: "Invalid email or password" });
+      }
+  
+      // Generate JWT token or simple token here
+      const token = "fake-jwt-token";
+  
+      res.json({ message: "Login successful", token });
+    } catch (error) {
+      console.error("MySQL error during login:", error);
+      res.status(500).json({ error: "Database error" });
+    }
+  });
+  
 
 // Start the server
 app.listen(PORT, () => {
