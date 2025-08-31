@@ -290,6 +290,27 @@ app.post("/api/admin-register", async (req, res) => {
       res.status(500).json({ error: "Database error" });
     }
   });
+
+  // Get all users with role
+app.get("/api/users", async (req, res) => {
+  const { role } = req.query; 
+  try {
+    let sql = "SELECT id, full_name, email, role FROM users";
+    const params = [];
+
+    if (role) {
+      sql += " WHERE role = ?";
+      params.push(role);
+    }
+
+    const [rows] = await pool.query(sql, params);
+    res.json(rows);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
   
 //student login  
   app.post("/api/student-login", async (req, res) => {
@@ -370,8 +391,54 @@ app.post("/api/teacher-login", async (req, res) => {
     }
   });
   
+  // Dashboard stats API
+app.get("/api/admin/stats", async (req, res) => {
+  try {
+    // Count users
+    const [userResult] = await pool.query("SELECT COUNT(*) AS count FROM users");
+
+    // Count classes (if your table exists)
+    // let classCount = 0;
+    // try {
+    //   const [classResult] = await pool.query("SELECT COUNT(*) AS count FROM classes");
+    //   classCount = classResult[0].count;
+    // } catch (err) {
+    //   console.warn("⚠️ Classes table not found, skipping...");
+    // }
+
+    res.json({
+      users: userResult[0].count,
+      classes: classCount,
+    });
+  } catch (err) {
+    console.error("DB error in /api/admin/stats:", err);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
   
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
+
+
+// const express = require("express");
+// const cors = require("cors");
+
+// const app = express();
+// const PORT = 5001;
+
+// app.use(cors());
+// app.use(express.json());
+
+// // Routes
+// app.use("/api/admin", require("./Routes/adminRoutes"));
+// app.use("/api/users", require("./routes/userRoutes"));   // to be created
+// app.use("/api/notices", require("./routes/noticeRoutes"));
+// app.use("/api/classes", require("./routes/classRoutes"));
+// app.use("/api/students", require("./routes/studentRoutes"));
+// app.use("/api/teachers", require("./routes/teacherRoutes"));
+
+// app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
+
