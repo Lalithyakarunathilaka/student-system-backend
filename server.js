@@ -16,6 +16,13 @@ if (!fs.existsSync(noticesFilePath)) {
     fs.writeFileSync(noticesFilePath, JSON.stringify([]));
 }
 
+// Routes
+app.use("/api/admin", require("./Routes/adminRoutes"));
+app.use("/api/notices", require("./Routes/noticeRoutes"));
+app.use("/api/users", require("./Routes/userRoutes"));
+// Add others later: users, students, teachers
+
+app.listen(PORT, () => console.log(`✅ Server running at http://localhost:${PORT}`));
 // const mysql = require("mysql2/promise");
 
 // const pool = mysql.createPool({
@@ -209,60 +216,6 @@ if (!fs.existsSync(noticesFilePath)) {
 // });
 
   
-// app.post("/api/admin-register", async (req, res) => {
-//     const { name, email, password } = req.body;
-  
-//     if (!name || !email || !password) {
-//       return res.status(400).json({ error: "Name, email and password are required" });
-//     }
-  
-//     try {
-//       // Check if email already exists
-//       const [rows] = await pool.query("SELECT id FROM admin WHERE email = ?", [email]);
-//       if (rows.length > 0) {
-//         return res.status(400).json({ error: "Email already registered" });
-//       }
-  
-//       // Insert new admin
-//       await pool.query(
-//         "INSERT INTO admin(name, email, password) VALUES (?, ?, ?)",
-//         [name, email, password]  // Reminder: hash password before saving in production
-//       );
-  
-//       res.status(201).json({ message: "Admin registered successfully" });
-//     } catch (error) {
-//       console.error("MySQL error during registration:", error);
-//       res.status(500).json({ error: "Database error" });
-//     }
-//   });
-  
-//   app.post("/api/admin-login", async (req, res) => {
-//     const { email, password } = req.body;
-  
-//     if (!email || !password) {
-//       return res.status(400).json({ error: "Email and password are required" });
-//     }
-  
-//     try {
-//       const [rows] = await pool.query(
-//         "SELECT * FROM admin WHERE email = ? AND password = ?",
-//         [email, password]  // Reminder: use hashed password comparison in real apps
-//       );
-  
-//       if (rows.length === 0) {
-//         return res.status(401).json({ error: "Invalid email or password" });
-//       }
-  
-//       // Generate JWT token or simple token here
-//       const token = "fake-jwt-token";
-  
-//       res.json({ message: "Login successful", token });
-//     } catch (error) {
-//       console.error("MySQL error during login:", error);
-//       res.status(500).json({ error: "Database error" });
-//     }
-//   });
-
 //   // Register user (admin adds user)
 //   app.post("/api/admin/add-user", async (req, res) => {
 //     const { fullName, email, password, role, grade, gender } = req.body;
@@ -461,10 +414,5 @@ if (!fs.existsSync(noticesFilePath)) {
 // app.use(cors());
 // app.use(express.json());
 
-// Routes
-app.use("/api/admin", require("./Routes/adminRoutes"));
-app.use("/api/notices", require("./Routes/noticeRoutes"));
-// Add others later: users, students, teachers
 
-app.listen(PORT, () => console.log(`✅ Server running at http://localhost:${PORT}`));
 
