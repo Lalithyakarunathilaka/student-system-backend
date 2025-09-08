@@ -20,6 +20,9 @@ if (!fs.existsSync(noticesFilePath)) {
 app.use("/api/admin", require("./Routes/adminRoutes"));
 app.use("/api/notices", require("./Routes/noticeRoutes"));
 app.use("/api/users", require("./Routes/userRoutes"));
+app.use("/api/student", require("./Routes/studentRoutes"));
+app.use("/api/teacher", require("./Routes/teacherRoutes"));
+app.use("/api/classes", require("./Routes/classRoutes"));
 // Add others later: users, students, teachers
 
 app.listen(PORT, () => console.log(`✅ Server running at http://localhost:${PORT}`));
