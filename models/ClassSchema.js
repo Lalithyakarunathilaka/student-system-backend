@@ -1,6 +1,5 @@
-const mongoose = require("mongoose");
 
-const classSchema = new mongoose.Schema({
+const ClassSchema = {
   name: {
     type: String,
     required: true,
@@ -11,6 +10,6 @@ const classSchema = new mongoose.Schema({
     ref: "User", // references a teacher
     required: true
   }
-}, { timestamps: true });
+};
 
-module.exports = mongoose.model("Class", classSchema);
+module.exports = ClassSchema;
