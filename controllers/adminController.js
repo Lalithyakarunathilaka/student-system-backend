@@ -45,8 +45,28 @@ exports.loginAdmin = async (req, res) => {
 // Admin Stats
 exports.getStats = async (req, res) => {
   try {
+    // Total Users
     const [users] = await pool.query("SELECT COUNT(*) AS count FROM users");
-    res.json({ users: users[0].count });
+
+    // Total Students
+    const [students] = await pool.query(
+      "SELECT COUNT(*) AS count FROM users WHERE role = 'student'"
+    );
+
+    // Total Teachers
+    const [teachers] = await pool.query(
+      "SELECT COUNT(*) AS count FROM users WHERE role = 'teacher'"
+    );
+
+    // Total Classes
+    const [classes] = await pool.query("SELECT COUNT(*) AS count FROM classes");
+
+    res.json({
+      users: users[0].count,
+      students: students[0].count,
+      teachers: teachers[0].count,
+      classes: classes[0].count,
+    });
   } catch (err) {
     console.error("Stats error:", err);
     res.status(500).json({ error: "Database error" });
