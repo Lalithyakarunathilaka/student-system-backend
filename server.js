@@ -6,8 +6,16 @@ const path = require("path");
 const app = express();
 const PORT = 5001;
 
+
+// server.js or app.js
+require("dotenv").config();
+
+
 app.use(cors());
 app.use(express.json());
+
+// Serve uploaded files
+app.use("/uploads", express.static("uploads"));
 
 const dataFilePath = path.join(__dirname, "studentdata.json");
 const noticesFilePath = path.join(__dirname, "notices.json");
@@ -25,6 +33,7 @@ app.use("/api/teacher", require("./Routes/teacherRoutes"));
 app.use("/api/classes", require("./Routes/classRoutes"));
 app.use("/api/subjects", require("./Routes/subjectRoutes"));
 app.use("/api/marks", require("./Routes/marksRoutes"));
+app.use("/api/teacher-leaves",require("./Routes/leaveRequestRoutes") );
 
 // Add others later: users, students, teachers
 

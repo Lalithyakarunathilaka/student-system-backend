@@ -1,6 +1,7 @@
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 const pool = require("../config/db");
 
-// Teacher Login
 exports.teacherLogin = async (req, res) => {
   const { email, password } = req.body;
 
@@ -9,6 +10,7 @@ exports.teacherLogin = async (req, res) => {
   }
 
   try {
+    // Check user by email
     const [rows] = await pool.query(
       "SELECT * FROM users WHERE email = ? AND deleted_at IS NULL",
       [email]
@@ -20,24 +22,40 @@ exports.teacherLogin = async (req, res) => {
 
     const user = rows[0];
 
+    // Must be a teacher
     if (user.role !== "teacher") {
       return res.status(403).json({ error: "You must use a teacher account to login" });
     }
 
-    if (user.password !== password) {
+    // Compare hashed password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    // Later you can generate a real JWT here
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: user.id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    // Fetch teacher’s assigned classes (from classes table)
+    const [classes] = await pool.query(
+      "SELECT id, name FROM classes WHERE teacher_id = ?",
+      [user.id]
+    );
+
     res.json({
       message: "Teacher login successful",
-      token: "fake-jwt-token",
+      token,
       teacher: {
         id: user.id,
         fullName: user.full_name,
         email: user.email,
         role: user.role,
         gender: user.gender,
+        classes, // array of class objects
       },
     });
   } catch (error) {
