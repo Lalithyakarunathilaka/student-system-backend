@@ -11,8 +11,10 @@ const PORT = 5001;
 require("dotenv").config();
 
 
-app.use(cors());
-app.use(express.json());
+// app.use(cors());
+// app.use(express.json());
+app.use(express.json());           
+app.use(require("cors")()); 
 
 // Serve uploaded files
 app.use("/uploads", express.static("uploads"));
