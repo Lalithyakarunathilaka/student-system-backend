@@ -1,21 +1,23 @@
 const pool = require("../config/db");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
-// Register Admin
+// POST /api/admin/register
 exports.registerAdmin = async (req, res) => {
   const { name, email, password } = req.body;
-
-  if (!name || !email || !password) {
+  if (!name || !email || !password)
     return res.status(400).json({ error: "Name, email and password are required" });
-  }
 
   try {
     const [rows] = await pool.query("SELECT id FROM admin WHERE email = ?", [email]);
-    if (rows.length > 0) return res.status(400).json({ error: "Email already registered" });
+    if (rows.length) return res.status(400).json({ error: "Email already registered" });
 
-    await pool.query(
-      "INSERT INTO admin(name, email, password) VALUES (?, ?, ?)",
-      [name, email, password]
-    );
+    const hash = await bcrypt.hash(password, 10);
+    await pool.query("INSERT INTO admin (name, email, password) VALUES (?, ?, ?)", [
+      name,
+      email,
+      hash,
+    ]);
 
     res.status(201).json({ message: "Admin registered successfully" });
   } catch (err) {
@@ -24,48 +26,51 @@ exports.registerAdmin = async (req, res) => {
   }
 };
 
-// Admin Login
+// POST /api/admin/login
 exports.loginAdmin = async (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password)
+    return res.status(400).json({ error: "Email and password are required" });
 
   try {
-    const [rows] = await pool.query(
-      "SELECT * FROM admin WHERE email = ? AND password = ?",
-      [email, password]
-    );
-    if (rows.length === 0) return res.status(401).json({ error: "Invalid credentials" });
+    const [rows] = await pool.query("SELECT id, name, email, password FROM admin WHERE email = ?", [
+      email,
+    ]);
+    if (!rows.length) return res.status(401).json({ error: "Invalid credentials" });
 
-    res.json({ message: "Login successful", token: "fake-jwt-token" });
+    const admin = rows[0];
+    const ok = await bcrypt.compare(password, admin.password);
+    if (!ok) return res.status(401).json({ error: "Invalid credentials" });
+
+    // 👇 Sign a real JWT with the SAME secret your middleware uses
+    const token = jwt.sign({ id: admin.id, role: "admin" }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
+    res.json({
+      message: "Login successful",
+      token,
+      admin: { id: admin.id, name: admin.name, email: admin.email, role: "admin" },
+    });
   } catch (err) {
     console.error("MySQL error:", err);
     res.status(500).json({ error: "Database error" });
   }
 };
 
-// Admin Stats
+// GET /api/admin/stats  (optional: require admin role)
 exports.getStats = async (req, res) => {
   try {
-    // Total Users
-    const [users] = await pool.query("SELECT COUNT(*) AS count FROM users");
-
-    // Total Students
-    const [students] = await pool.query(
-      "SELECT COUNT(*) AS count FROM users WHERE role = 'student'"
-    );
-
-    // Total Teachers
-    const [teachers] = await pool.query(
-      "SELECT COUNT(*) AS count FROM users WHERE role = 'teacher'"
-    );
-
-    // Total Classes
-    const [classes] = await pool.query("SELECT COUNT(*) AS count FROM classes");
+    const [[users]] = await pool.query("SELECT COUNT(*) AS count FROM users");
+    const [[students]] = await pool.query("SELECT COUNT(*) AS count FROM users WHERE role='student'");
+    const [[teachers]] = await pool.query("SELECT COUNT(*) AS count FROM users WHERE role='teacher'");
+    const [[classes]] = await pool.query("SELECT COUNT(*) AS count FROM classes");
 
     res.json({
-      users: users[0].count,
-      students: students[0].count,
-      teachers: teachers[0].count,
-      classes: classes[0].count,
+      users: users.count,
+      students: students.count,
+      teachers: teachers.count,
+      classes: classes.count,
     });
   } catch (err) {
     console.error("Stats error:", err);
