@@ -1,26 +1,29 @@
+// Routes/teacherLeaveRoutes.js
 const express = require("express");
 const router = express.Router();
-const teacherLeaveController = require("../controllers/leaveRequestController");
 const multer = require("multer");
+const auth = require("../middleware/loginMiddleware");
+const teacherLeaveController = require("../controllers/leaveRequestController");
 
-// Create a simple multer instance for basic file handling
+// In-memory file handling (still unused in controller)
 const upload = multer({
-  storage: multer.memoryStorage(), // Store in memory instead of disk
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
-  },
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-// Teacher submits a leave request
-router.post("/submit", upload.single("document"), teacherLeaveController.submitLeave);
+// Teacher: submit leave (JWT)
+router.post("/submit", auth, upload.single("document"), teacherLeaveController.submitLeave);
 
-// Admin: Get all leave requests
-router.get("/get-all", teacherLeaveController.getAllLeaves);
+// Teacher: get MY leaves (JWT)
+router.get("/mine", auth, teacherLeaveController.getMyLeaves);
 
-// Teacher: Get leave requests by teacher ID
-router.get("/:teacherId", teacherLeaveController.getLeavesByTeacher);
+// Admin: get all (you can wrap with an admin middleware if you have one)
+router.get("/get-all", auth, teacherLeaveController.getAllLeaves);
 
-// Admin: Approve/Reject leave request
-router.put("/:id", teacherLeaveController.updateLeaveStatus);
+// Admin: get by specific teacher id
+router.get("/:teacherId", auth, teacherLeaveController.getLeavesByTeacher);
+
+// Admin: approve/reject
+router.put("/:id", auth, teacherLeaveController.updateLeaveStatus);
 
 module.exports = router;
