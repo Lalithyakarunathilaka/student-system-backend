@@ -18,4 +18,6 @@ router.get("/student/:studentId", marksController.getStudentMarks);
 // Get marks for specific class
 router.get("/class-marks/:classId", marksController.getClassMarks);
 
+router.get("/teacher-marks", marksController.getMyClassData);
+
 module.exports = router;
