@@ -52,37 +52,37 @@ app.listen(PORT, () => console.log(`✅ Server running at http://localhost:${POR
 //   queueLimit: 0,
 // });
 
-// // get student data 
-// app.get("/api/students", (req, res) => {
-//     fs.readFile(dataFilePath, "utf8", (err, data) => {
-//         if (err) {
-//             console.error("Error reading student data:", err);
-//             return res.status(500).json({ error: "Failed to read data" });
-//         }
+// get student data 
+app.get("/api/students", (req, res) => {
+    fs.readFile(dataFilePath, "utf8", (err, data) => {
+        if (err) {
+            console.error("Error reading student data:", err);
+            return res.status(500).json({ error: "Failed to read data" });
+        }
 
-//         let students = JSON.parse(data);
+        let students = JSON.parse(data);
 
-//         // subject filter
-//         const subjectFilter = req.query.subject;
-//         if (subjectFilter) {
-//             students = students.map(student => ({
-//                 ...student,
-//                 marks: student.marks.filter(mark => mark.subject === subjectFilter)
-//             })).filter(student => student.marks.length > 0);
-//         }
+        // subject filter
+        const subjectFilter = req.query.subject;
+        if (subjectFilter) {
+            students = students.map(student => ({
+                ...student,
+                marks: student.marks.filter(mark => mark.subject === subjectFilter)
+            })).filter(student => student.marks.length > 0);
+        }
 
-//         // term filter
-//         const termFilter = req.query.term;
-//         if (termFilter) {
-//             students = students.map(student => ({
-//                 ...student,
-//                 marks: student.marks.filter(mark => mark.term === termFilter)
-//             })).filter(student => student.marks.length > 0);
-//         }
+        // term filter
+        const termFilter = req.query.term;
+        if (termFilter) {
+            students = students.map(student => ({
+                ...student,
+                marks: student.marks.filter(mark => mark.term === termFilter)
+            })).filter(student => student.marks.length > 0);
+        }
 
-//         res.json(students);
-//     });
-// });
+        res.json(students);
+    });
+});
 
 // // get all notices
 // app.get("/api/notices", (req, res) => {

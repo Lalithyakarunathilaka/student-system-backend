@@ -216,3 +216,35 @@ exports.getMyClassData = async (req, res) => {
     res.status(500).json({ error: "Database error" });
   }
 };
+
+// ✅ Identify weak students
+exports.getSupportNeededStudents = async (req, res) => {
+  try {
+    const { classId } = req.params;
+    const { term = "First Term", academic_year = "2024-2025" } = req.query;
+
+    const [rows] = await db.query(
+      `SELECT u.id AS student_id, u.full_name AS student_name, 
+              AVG(m.marks) AS avg_marks
+         FROM users u
+    LEFT JOIN marks m 
+           ON u.id = m.student_id 
+          AND m.term = ? 
+          AND m.academic_year = ?
+        WHERE u.class_id = ? 
+          AND u.role = 'student'
+     GROUP BY u.id, u.full_name
+     ORDER BY avg_marks ASC`,
+      [term, academic_year, classId]
+    );
+
+    // Threshold e.g. avg < 40
+    const threshold = 40;
+    const supportNeeded = rows.filter(r => r.avg_marks !== null && r.avg_marks < threshold);
+
+    res.json({ students: rows, supportNeeded });
+  } catch (err) {
+    console.error("Error in getSupportNeededStudents:", err);
+    res.status(500).json({ error: "Database error" });
+  }
+};

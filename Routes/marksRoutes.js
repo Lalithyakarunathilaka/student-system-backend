@@ -20,4 +20,6 @@ router.get("/class-marks/:classId", marksController.getClassMarks);
 
 router.get("/teacher-marks", marksController.getMyClassData);
 
+router.get("/support-needed/:classId", marksController.getSupportNeededStudents);
+
 module.exports = router;
