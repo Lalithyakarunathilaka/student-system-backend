@@ -6,7 +6,7 @@ const { addTeacher } = require("../controllers/addTeacherController");
 // Admin adds a user
 router.post("/add-teacher", addTeacher);
 
-// Get all users (optionally filter by role)
+// Get all users 
 router.get("/get", getUsers);
 
 // Update user

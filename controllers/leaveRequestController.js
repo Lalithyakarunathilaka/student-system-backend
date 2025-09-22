@@ -1,7 +1,7 @@
-// controllers/leaveRequestController.js
+
 const db = require("../config/db");
 
-// ✅ Teacher submits a leave request (uses JWT)
+// Teacher submits a leave request (uses JWT)
 exports.submitLeave = async (req, res) => {
   try {
     const { id: teacherId, role } = req.user || {};
@@ -10,9 +10,9 @@ exports.submitLeave = async (req, res) => {
     }
 
     const {
-      // no teacher_id from body!
-      name,              // optional — we can derive from DB if omitted
-      class_assigned,    // optional — we can derive from DB if omitted
+      
+      name,              
+      class_assigned,    
       leave_type,
       start_date,
       end_date,
@@ -41,7 +41,7 @@ exports.submitLeave = async (req, res) => {
       if (!derivedClass) derivedClass = t?.class_name || null;
     }
 
-    // For now, still not storing files
+  
     const document = null;
 
     const [results] = await db.query(
@@ -58,7 +58,7 @@ exports.submitLeave = async (req, res) => {
   }
 };
 
-// ✅ Admin view — all leaves (optionally guard with an admin check)
+// Admin view all leaves 
 exports.getAllLeaves = async (_req, res) => {
   try {
     const [results] = await db.query(
@@ -71,7 +71,7 @@ exports.getAllLeaves = async (_req, res) => {
   }
 };
 
-// ✅ Teacher view — MY leaves (uses JWT)
+// Teacher view — MY leaves 
 exports.getMyLeaves = async (req, res) => {
   try {
     const { id: teacherId, role } = req.user || {};
@@ -90,7 +90,7 @@ exports.getMyLeaves = async (req, res) => {
   }
 };
 
-// ✅ (Optional) Admin: leaves by teacher id
+// Admin: leaves by teacher id
 exports.getLeavesByTeacher = async (req, res) => {
   try {
     const { teacherId } = req.params;
@@ -105,7 +105,7 @@ exports.getLeavesByTeacher = async (req, res) => {
   }
 };
 
-// ✅ Admin: Approve/Reject
+// Admin leave approve or reject
 exports.updateLeaveStatus = async (req, res) => {
   try {
     const { id } = req.params;

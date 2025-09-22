@@ -7,7 +7,7 @@ exports.getClassData = async (req, res) => {
 
     console.log("Fetching class data for:", teacherId, term, academic_year);
 
-    // ✅ Fetch class assigned to teacher
+    // Fetch class assigned to teacher
     const [classInfo] = await db.query(
       "SELECT id, name FROM classes WHERE teacher_id = ?",
       [teacherId]
@@ -20,7 +20,7 @@ exports.getClassData = async (req, res) => {
     const class_id = classInfo[0].id;
     const class_name = classInfo[0].name;
 
-    // ✅ Fetch students in this class
+    //Fetch students in this class
     const [students] = await db.query(
       "SELECT id AS student_id, full_name FROM users WHERE role = 'student' AND class_id = ?",
       [class_id]
@@ -30,7 +30,6 @@ exports.getClassData = async (req, res) => {
       "SELECT id AS subject_id, name FROM subjects"
     );    
 
-    // ✅ Return clean JSON
     res.json({
       students,
       subjects,
@@ -44,7 +43,7 @@ exports.getClassData = async (req, res) => {
 };
 
 
-// ✅ Bulk add/update marks
+//Bulk add/update marks
 exports.bulkAddMarks = async (req, res) => {
   try {
     const { marks, term = "First Term", academic_year = "2024-2025" } = req.body;
@@ -61,7 +60,7 @@ exports.bulkAddMarks = async (req, res) => {
         const { student_id, subject_id, teacher_id, marks: markValue } = markData;
         
         if (markValue === "" || markValue === null) {
-          // Skip empty marks (delete existing if any)
+          // Skip empty marks 
           await connection.query(
             "DELETE FROM marks WHERE student_id = ? AND subject_id = ? AND term = ? AND academic_year = ?",
             [student_id, subject_id, term, academic_year]
@@ -113,7 +112,7 @@ exports.bulkAddMarks = async (req, res) => {
   }
 };
 
-// ✅ Get marks for a specific student
+// Get marks for a specific student
 exports.getStudentMarks = async (req, res) => {
   try {
     const { studentId } = req.params;
@@ -135,7 +134,7 @@ exports.getStudentMarks = async (req, res) => {
   }
 };
 
-// ✅ Get marks for a specific class
+// Get marks for a specific class
 exports.getClassMarks = async (req, res) => {
   try {
     const { classId } = req.params;
@@ -167,7 +166,7 @@ exports.getMyClassData = async (req, res) => {
 
     const { term = "First Term", academic_year = "2024-2025" } = req.query;
 
-    // 1) class for this teacher
+    // class for this teacher
     const [classInfo] = await db.query(
       "SELECT id, name FROM classes WHERE teacher_id = ? LIMIT 1",
       [teacherId]
@@ -177,18 +176,18 @@ exports.getMyClassData = async (req, res) => {
     }
     const { id: class_id, name: class_name } = classInfo[0];
 
-    // 2) students in the class
+    // students in the class
     const [students] = await db.query(
       "SELECT id AS student_id, full_name AS student_name FROM users WHERE role='student' AND class_id = ? AND deleted_at IS NULL ORDER BY full_name",
       [class_id]
     );
 
-    // 3) subjects (you can filter by grade/section if you have that mapping)
+    // subjects 
     const [subjects] = await db.query(
       "SELECT id AS subject_id, name AS subject_name FROM subjects ORDER BY name"
     );
 
-    // 4) marks for this class+term+year
+    // marks for this class+term+year
     const [marks] = await db.query(
       `SELECT m.student_id, m.subject_id, m.marks, m.term, m.academic_year,
               t.full_name AS teacher_name
@@ -207,9 +206,9 @@ exports.getMyClassData = async (req, res) => {
       class_name,
       term,
       academic_year,
-      students,   // [{student_id, student_name}]
-      subjects,   // [{subject_id, subject_name}]
-      marks       // [{student_id, subject_id, marks, ...}]
+      students,   
+      subjects,   
+      marks       
     });
   } catch (err) {
     console.error("getMyClassData error:", err);
@@ -238,8 +237,8 @@ exports.getSupportNeededStudents = async (req, res) => {
       [term, academic_year, classId]
     );
 
-    // Threshold e.g. avg < 40
-    const threshold = 40;
+    // check avg < 40
+    const threshold = 50;
     const supportNeeded = rows.filter(r => r.avg_marks !== null && r.avg_marks < threshold);
 
     res.json({ students: rows, supportNeeded });

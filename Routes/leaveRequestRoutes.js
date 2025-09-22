@@ -11,19 +11,19 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-// Teacher: submit leave (JWT)
+// submit leave
 router.post("/submit", auth, upload.single("document"), teacherLeaveController.submitLeave);
 
-// Teacher: get MY leaves (JWT)
+// get MY leaves 
 router.get("/mine", auth, teacherLeaveController.getMyLeaves);
 
-// Admin: get all (you can wrap with an admin middleware if you have one)
+// Admin get all 
 router.get("/get-all", auth, teacherLeaveController.getAllLeaves);
 
-// Admin: get by specific teacher id
+// Admin get by specific teacher id
 router.get("/:teacherId", auth, teacherLeaveController.getLeavesByTeacher);
 
-// Admin: approve/reject
+// Admin approve/reject
 router.put("/:id", auth, teacherLeaveController.updateLeaveStatus);
 
 module.exports = router;

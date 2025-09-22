@@ -6,7 +6,7 @@ const { addUser, getUsers, deleteUser, updateUser } = require("../controllers/ad
 router.post("/add", addUser);
 
 
-// Get all users (optionally filter by role)
+// Get all users 
 router.get("/get", getUsers);
 
 // Update user

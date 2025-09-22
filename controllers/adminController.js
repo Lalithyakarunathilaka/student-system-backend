@@ -42,7 +42,7 @@ exports.loginAdmin = async (req, res) => {
     const ok = await bcrypt.compare(password, admin.password);
     if (!ok) return res.status(401).json({ error: "Invalid credentials" });
 
-    // 👇 Sign a real JWT with the SAME secret your middleware uses
+  
     const token = jwt.sign({ id: admin.id, role: "admin" }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
@@ -58,7 +58,7 @@ exports.loginAdmin = async (req, res) => {
   }
 };
 
-// GET /api/admin/stats  (optional: require admin role)
+// GET /api/admin/stats  
 exports.getStats = async (req, res) => {
   try {
     const [[users]] = await pool.query("SELECT COUNT(*) AS count FROM users");

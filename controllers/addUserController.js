@@ -34,7 +34,7 @@ exports.addUser = async (req, res) => {
       return res.status(400).json({ error: "Email already registered" });
     }
 
-    // 🔐 Hash password before saving
+    // Hash password before saving
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -47,7 +47,7 @@ exports.addUser = async (req, res) => {
         email,
         hashedPassword,
         role,
-        req.body.class_id || null, // <-- use class_id instead of grade
+        req.body.class_id || null, 
         gender || null,
         date_of_birth || null,
         join_date || null,
@@ -88,7 +88,7 @@ exports.updateUser = async (req, res) => {
       full_name,
       email,
       role,
-      req.body.class_id || null, // <-- class_id here
+      req.body.class_id || null, 
       gender || null,
       date_of_birth || null,
       join_date || null,

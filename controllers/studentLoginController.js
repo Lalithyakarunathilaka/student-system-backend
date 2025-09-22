@@ -5,7 +5,7 @@ const pool = require("../config/db");
 
 const ASSIGN_TABLE = "class_subject_teacher";
 
-// Parse "10-A", "10A", or "10 - A" → { grade: 10, class_name: "A" }
+
 function parseGradeClass(name) {
   if (!name) return null;
   const m = String(name).trim().match(/^(\d+)\s*[- ]?\s*([A-Za-z])$/);
@@ -18,7 +18,7 @@ exports.studentLogin = async (req, res) => {
     return res.status(400).json({ error: "Email and password are required" });
 
   try {
-    // 1) Find student by email
+    // Find student by email
     const [rows] = await pool.query(
       `SELECT id, full_name, email, password, role, gender, class_id
          FROM users
@@ -31,32 +31,31 @@ exports.studentLogin = async (req, res) => {
 
     const user = rows[0];
 
-    // 2) Check password
+    //Check password
     const ok = await bcrypt.compare(password, user.password);
     if (!ok) return res.status(401).json({ error: "Invalid email or password" });
 
-    // 3) Issue token (optional)
+    //Issue token 
     const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
 
-    // 4) Class + subjects
     let classData = null;
     let subjects = [];
 
     if (user.class_id) {
-      // ✅ classes table has only id, name, teacher_id, timestamps
+      
       const [[cls]] = await pool.query(
         `SELECT id, name FROM classes WHERE id = ? LIMIT 1`,
         [user.class_id]
       );
       classData = cls || null;
 
-      // Derive grade/section from classes.name like "10-A"
+      // Derive grade/section from classes.name 
       const parsed = parseGradeClass(cls?.name);
 
       if (parsed) {
-        // Get subjects from class_subject_teacher → subjects (and teacher’s name if you want)
+        // Get subjects from class_subject_teacher table
         const [subs] = await pool.query(
           `SELECT 
               cst.subject_id      AS id,
@@ -74,12 +73,11 @@ exports.studentLogin = async (req, res) => {
         );
         subjects = subs;
       } else {
-        // If class name doesn't match "10-A", we can't derive grade/section:
-        subjects = []; // or fallback to an all-grade list if that’s desired
+        
+        subjects = []; 
       }
     }
 
-    // 5) Respond
     return res.json({
       message: "Student login successful",
       token, // optional
@@ -87,10 +85,10 @@ exports.studentLogin = async (req, res) => {
         id: user.id,
         name: user.full_name,
         email: user.email,
-        role: user.role,     // "student"
+        role: user.role,     
         gender: user.gender,
-        class: classData,    // { id, name } or null
-        subjects,            // [{ id, subject_name, grade, class_name, teacher_id, teacher_name }]
+        class: classData,    
+        subjects,            
       },
     });
   } catch (err) {
