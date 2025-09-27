@@ -112,33 +112,59 @@ exports.bulkAddMarks = async (req, res) => {
   }
 };
 
-// Get marks for a specific student
+// Get marks for a specific student (all terms by default)
 exports.getStudentMarks = async (req, res) => {
   try {
     const { studentId } = req.params;
-    const { term = "First Term", academic_year = "2024-2025" } = req.query;
+    const { term, academic_year } = req.query; // <-- no defaults
 
-    const [marks] = await db.query(
-      `SELECT m.*, s.name as subject_name, t.full_name as teacher_name
-       FROM marks m
-       JOIN subjects s ON m.subject_id = s.id
-       JOIN users t ON m.teacher_id = t.id
-       WHERE m.student_id = ? AND m.term = ? AND m.academic_year = ?`,
-      [studentId, term, academic_year]
-    );
+    const baseSql = `
+      SELECT 
+        m.*, 
+        s.name AS subject_name, 
+        t.full_name AS teacher_name
+      FROM marks m
+      JOIN subjects s ON m.subject_id = s.id
+      JOIN users t ON m.teacher_id = t.id
+    `;
 
-    res.json(marks);
+    const where = ['m.student_id = ?'];
+    const params = [studentId];
+
+    if (term && term.trim()) {
+      where.push('m.term = ?');
+      params.push(term.trim());
+    }
+
+    if (academic_year && academic_year.trim()) {
+      where.push('m.academic_year = ?');
+      params.push(academic_year.trim());
+    }
+
+    // Order by academic year then term (First→Second→Third), then subject
+    const sql = `
+      ${baseSql}
+      WHERE ${where.join(' AND ')}
+      ORDER BY 
+        m.academic_year,
+        FIELD(m.term, 'First Term','Second Term','Third Term'),
+        s.name
+    `;
+
+    const [rows] = await db.query(sql, params);
+    return res.json(rows);
   } catch (err) {
-    console.error("Error fetching student marks:", err);
-    res.status(500).json({ error: "Database error" });
+    console.error('Error fetching student marks:', err);
+    return res.status(500).json({ error: 'Database error' });
   }
 };
+
 
 // Get marks for a specific class
 exports.getClassMarks = async (req, res) => {
   try {
     const { classId } = req.params;
-    const { term = "First Term", academic_year = "2024-2025" } = req.query;
+    const { term, academic_year } = req.query;
 
     const [marks] = await db.query(
       `SELECT m.*, u.full_name as student_name, s.name as subject_name, t.full_name as teacher_name
@@ -220,7 +246,7 @@ exports.getMyClassData = async (req, res) => {
 exports.getSupportNeededStudents = async (req, res) => {
   try {
     const { classId } = req.params;
-    const { term = "First Term", academic_year = "2024-2025" } = req.query;
+    const { term, academic_year } = req.query;
 
     const [rows] = await db.query(
       `SELECT u.id AS student_id, u.full_name AS student_name, 
