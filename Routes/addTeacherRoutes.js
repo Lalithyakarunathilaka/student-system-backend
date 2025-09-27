@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { addUser, getUsers, deleteUser, updateUser } = require("../controllers/addUserController");
+const { addUser, getUsers, deleteUser, updateUser } = require("../controllers/adduser.controller");
 const { addTeacher } = require("../controllers/addTeacherController");
 
 // Admin adds a user

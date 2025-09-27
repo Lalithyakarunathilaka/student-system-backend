@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const classController = require("../controllers/classConntroller");
+const classController = require("../controllers/class.controller");
 
 // Create a new class
 router.post("/add-class", classController.createClass);

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const marksController = require("../controllers/marksController");
+const marksController = require("../controllers/marks.controller");
 // const { authenticateToken } = require("../middleware/loginMiddleware");
 
 // // Apply authentication to all routes

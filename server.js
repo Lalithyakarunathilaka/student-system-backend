@@ -24,15 +24,15 @@ if (!fs.existsSync(noticesFilePath)) {
 }
 
 // Routes
-app.use("/api/admin", require("./Routes/adminRoutes"));
-app.use("/api/notices", require("./Routes/noticeRoutes"));
-app.use("/api/users", require("./Routes/userRoutes"));
-app.use("/api/student", require("./Routes/studentRoutes"));
-app.use("/api/teacher", require("./Routes/teacherRoutes"));
-app.use("/api/classes", require("./Routes/classRoutes"));
-app.use("/api/subjects", require("./Routes/subjectRoutes"));
-app.use("/api/marks", require("./Routes/marksRoutes"));
-app.use("/api/teacher-leaves",require("./Routes/leaveRequestRoutes") );
+app.use("/api/admin", require("./Routes/admin.routes"));
+app.use("/api/notices", require("./Routes/notice.routes"));
+app.use("/api/users", require("./Routes/user.routes"));
+app.use("/api/student", require("./Routes/student.routes"));
+app.use("/api/teacher", require("./Routes/teacher.routes"));
+app.use("/api/classes", require("./Routes/class.routes"));
+app.use("/api/subjects", require("./Routes/subject.routes"));
+app.use("/api/marks", require("./Routes/marks.routes"));
+app.use("/api/teacher-leaves",require("./Routes/leaverequest.routes") );
 
 
 app.listen(PORT, () => console.log(`✅ Server running at http://localhost:${PORT}`));

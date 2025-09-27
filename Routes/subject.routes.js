@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const subjectController = require("../controllers/subjectController");
+const subjectController = require("../controllers/subject.controller");
 
 // Subjects
 router.post("/add-subject", subjectController.addSubject);

@@ -7,10 +7,10 @@ const {
   teacherLogin,
   getMe,
   getMyClassesWithStudents,
-} = require("../controllers/teacherLoginController");
+} = require("../controllers/teacherlogin.controller");
 
 // NEW: import the getter from marks controller
-const { getMyClassData } = require("../controllers/marksController");
+const { getMyClassData } = require("../controllers/marks.controller");
 
 // Public
 router.post("/login", teacherLogin);

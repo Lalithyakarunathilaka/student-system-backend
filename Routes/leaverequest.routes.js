@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const auth = require("../middleware/loginMiddleware");
-const teacherLeaveController = require("../controllers/leaveRequestController");
+const teacherLeaveController = require("../controllers/leaverequest.controller");
 
 // In-memory file handling (still unused in controller)
 const upload = multer({
