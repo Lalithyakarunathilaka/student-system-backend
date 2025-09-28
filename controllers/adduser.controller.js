@@ -122,7 +122,7 @@ exports.getUsers = async (req, res) => {
     id, 
     full_name, 
     email, 
-    class_id,      -- use class_id
+    class_id,     
     gender,
     DATE(date_of_birth) AS date_of_birth, 
     DATE(hire_date) AS join_date, 

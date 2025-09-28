@@ -263,7 +263,7 @@ exports.getSupportNeededStudents = async (req, res) => {
       [term, academic_year, classId]
     );
 
-    // check avg < 40
+    // check avg < 50
     const threshold = 50;
     const supportNeeded = rows.filter(r => r.avg_marks !== null && r.avg_marks < threshold);
 

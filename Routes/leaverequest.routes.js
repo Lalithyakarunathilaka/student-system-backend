@@ -5,7 +5,7 @@ const multer = require("multer");
 const auth = require("../middleware/loginMiddleware");
 const teacherLeaveController = require("../controllers/leaverequest.controller");
 
-// In-memory file handling (still unused in controller)
+
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },

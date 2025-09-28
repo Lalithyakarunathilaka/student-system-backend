@@ -3,8 +3,6 @@ const router = express.Router();
 const marksController = require("../controllers/marks.controller");
 // const { authenticateToken } = require("../middleware/loginMiddleware");
 
-// // Apply authentication to all routes
-// router.use(authenticateToken);
 
 // Get class data for teacher
 router.get("/class/:teacherId", marksController.getClassData);
