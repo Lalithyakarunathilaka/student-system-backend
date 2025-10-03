@@ -33,6 +33,7 @@ app.use("/api/classes", require("./Routes/class.routes"));
 app.use("/api/subjects", require("./Routes/subject.routes"));
 app.use("/api/marks", require("./Routes/marks.routes"));
 app.use("/api/teacher-leaves",require("./Routes/leaverequest.routes") );
+app.use("/api/retirements",require("./Routes/retirement.routes") );
 
 
 app.listen(PORT, () => console.log(`✅ Server running at http://localhost:${PORT}`));
