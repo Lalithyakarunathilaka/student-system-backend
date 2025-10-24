@@ -34,6 +34,9 @@ app.use("/api/subjects", require("./Routes/subject.routes"));
 app.use("/api/marks", require("./Routes/marks.routes"));
 app.use("/api/teacher-leaves",require("./Routes/leaverequest.routes") );
 app.use("/api/retirements",require("./Routes/retirement.routes") );
+app.use("/api/interventions", require("./Routes/intervention.routes"));
+app.use("/api/overall", require("./Routes/studentanalysis.routes"));
+
 
 
 app.listen(PORT, () => console.log(`✅ Server running at http://localhost:${PORT}`));
@@ -77,36 +80,36 @@ app.listen(PORT, () => console.log(`✅ Server running at http://localhost:${POR
 // });
 
 // get student data 
-app.get("/api/students", (req, res) => {
-    fs.readFile(dataFilePath, "utf8", (err, data) => {
-        if (err) {
-            console.error("Error reading student data:", err);
-            return res.status(500).json({ error: "Failed to read data" });
-        }
+// app.get("/api/students", (req, res) => {
+//     fs.readFile(dataFilePath, "utf8", (err, data) => {
+//         if (err) {
+//             console.error("Error reading student data:", err);
+//             return res.status(500).json({ error: "Failed to read data" });
+//         }
 
-        let students = JSON.parse(data);
+//         let students = JSON.parse(data);
 
-        // subject filter
-        const subjectFilter = req.query.subject;
-        if (subjectFilter) {
-            students = students.map(student => ({
-                ...student,
-                marks: student.marks.filter(mark => mark.subject === subjectFilter)
-            })).filter(student => student.marks.length > 0);
-        }
+//         // subject filter
+//         const subjectFilter = req.query.subject;
+//         if (subjectFilter) {
+//             students = students.map(student => ({
+//                 ...student,
+//                 marks: student.marks.filter(mark => mark.subject === subjectFilter)
+//             })).filter(student => student.marks.length > 0);
+//         }
 
-        // term filter
-        const termFilter = req.query.term;
-        if (termFilter) {
-            students = students.map(student => ({
-                ...student,
-                marks: student.marks.filter(mark => mark.term === termFilter)
-            })).filter(student => student.marks.length > 0);
-        }
+//         // term filter
+//         const termFilter = req.query.term;
+//         if (termFilter) {
+//             students = students.map(student => ({
+//                 ...student,
+//                 marks: student.marks.filter(mark => mark.term === termFilter)
+//             })).filter(student => student.marks.length > 0);
+//         }
 
-        res.json(students);
-    });
-});
+//         res.json(students);
+//     });
+// });
 
 // // get all notices
 // app.get("/api/notices", (req, res) => {

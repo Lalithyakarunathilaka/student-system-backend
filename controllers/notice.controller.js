@@ -9,12 +9,24 @@ exports.addNotice = async (req, res) => {
   }
 
   try {
-    const sql = `INSERT INTO notices (title, description, category, permission) VALUES (?, ?, ?, ?)`;
-    const [result] = await pool.query(sql, [title, description, category, permission || "Both"]);
+    const sql = `INSERT INTO notices (title, description, category, permission, created_at, updated_at)
+                 VALUES (?, ?, ?, ?, NOW(), NOW())`;
+    const [result] = await pool.query(sql, [
+      title,
+      description,
+      category,
+      permission || "Both",
+    ]);
 
     res.status(201).json({
       message: "Notice added successfully",
-      notice: { id: result.insertId, title, description, category, permission }
+      notice: {
+        id: result.insertId,
+        title,
+        description,
+        category,
+        permission,
+      },
     });
   } catch (err) {
     console.error("DB insert error:", err);
@@ -22,12 +34,41 @@ exports.addNotice = async (req, res) => {
   }
 };
 
-// Get Notices
+// Get All Notices
 exports.getAllNotices = async (req, res) => {
   try {
-    const [results] = await pool.query("SELECT * FROM notices ORDER BY created_at DESC");
+    const [results] = await pool.query(
+      "SELECT * FROM notices ORDER BY created_at DESC"
+    );
     res.json(results);
   } catch (err) {
+    res.status(500).json({ message: "Database error" });
+  }
+};
+
+// Update Notice
+exports.updateNotice = async (req, res) => {
+  const { id } = req.params;
+  const { title, description, category, permission } = req.body;
+
+  if (!title || !description || !category) {
+    return res.status(400).json({ message: "All fields required" });
+  }
+
+  try {
+    const [result] = await pool.query(
+      `UPDATE notices 
+       SET title = ?, description = ?, category = ?, permission = ?, updated_at = NOW() 
+       WHERE id = ?`,
+      [title, description, category, permission, id]
+    );
+
+    if (result.affectedRows === 0)
+      return res.status(404).json({ message: "Notice not found" });
+
+    res.json({ message: "Notice updated successfully" });
+  } catch (err) {
+    console.error("DB update error:", err);
     res.status(500).json({ message: "Database error" });
   }
 };

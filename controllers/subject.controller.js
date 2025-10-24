@@ -1,12 +1,19 @@
 const pool = require("../config/db");
 
-// Add a new subject
-exports.addSubject = async (req, res) => {
-  const { name, grade } = req.body;
+// 🧹 Utility
+function cleanName(name) {
+  return String(name || "")
+    .trim()
+    .replace(/\s+/g, " ");
+}
 
+// ✅ Add subject
+exports.addSubject = async (req, res) => {
+  let { name, grade } = req.body;
   if (!name || !grade) {
     return res.status(400).json({ error: "Subject name and grade are required" });
   }
+  name = cleanName(name);
 
   try {
     const [result] = await pool.query(
@@ -15,15 +22,69 @@ exports.addSubject = async (req, res) => {
     );
     res.status(201).json({ message: "Subject added successfully", id: result.insertId });
   } catch (err) {
+    if (err?.code === "ER_DUP_ENTRY") {
+      return res.status(409).json({ error: "Subject already exists for this grade" });
+    }
     console.error("MySQL error:", err);
     res.status(500).json({ error: "Database error" });
   }
 };
 
-// Get all subjects
+// ✅ Update subject
+exports.updateSubject = async (req, res) => {
+  const { id } = req.params;
+  const { name, grade } = req.body;
+
+  if (!name || !grade) {
+    return res.status(400).json({ error: "Subject name and grade are required" });
+  }
+
+  try {
+    const [existing] = await pool.query(
+      "SELECT id FROM subjects WHERE name = ? AND grade = ? AND id != ?",
+      [name, grade, id]
+    );
+    if (existing.length > 0) {
+      return res.status(409).json({ error: "Subject already exists for this grade" });
+    }
+
+    const [result] = await pool.query(
+      "UPDATE subjects SET name = ?, grade = ?, updated_at = NOW() WHERE id = ?",
+      [name, grade, id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Subject not found" });
+    }
+
+    res.json({ message: "Subject updated successfully" });
+  } catch (err) {
+    console.error("MySQL error:", err);
+    res.status(500).json({ error: "Database error" });
+  }
+};
+
+// ✅ Delete subject
+exports.deleteSubject = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const [result] = await pool.query("DELETE FROM subjects WHERE id = ?", [id]);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Subject not found" });
+    }
+    res.json({ message: "Subject deleted successfully" });
+  } catch (err) {
+    console.error("MySQL error:", err);
+    res.status(500).json({ error: "Database error" });
+  }
+};
+
+// ✅ Get all subjects
 exports.getSubjects = async (req, res) => {
   try {
-    const [rows] = await pool.query("SELECT * FROM subjects ORDER BY grade, name");
+    const [rows] = await pool.query(
+      "SELECT id, name, grade FROM subjects ORDER BY grade, name"
+    );
     res.json(rows);
   } catch (err) {
     console.error("MySQL error:", err);
@@ -31,7 +92,7 @@ exports.getSubjects = async (req, res) => {
   }
 };
 
-// Assign teacher to a subject for a specific grade and class
+// ✅ Assign teacher to subject
 exports.assignTeacher = async (req, res) => {
   const { grade, class_name, subject_id, teacher_id } = req.body;
 
@@ -40,14 +101,12 @@ exports.assignTeacher = async (req, res) => {
   }
 
   try {
-    // Check if assignment already exists
     const [existing] = await pool.query(
       "SELECT id FROM class_subject_teacher WHERE grade = ? AND class_name = ? AND subject_id = ?",
       [grade, class_name, subject_id]
     );
 
     if (existing.length > 0) {
-      // Update teacher if already assigned
       await pool.query(
         "UPDATE class_subject_teacher SET teacher_id = ?, updated_at = NOW() WHERE id = ?",
         [teacher_id, existing[0].id]
@@ -55,7 +114,6 @@ exports.assignTeacher = async (req, res) => {
       return res.json({ message: "Teacher assignment updated successfully" });
     }
 
-    // Insert new assignment
     await pool.query(
       "INSERT INTO class_subject_teacher (grade, class_name, subject_id, teacher_id, created_at, updated_at) VALUES (?, ?, ?, ?, NOW(), NOW())",
       [grade, class_name, subject_id, teacher_id]
@@ -68,10 +126,25 @@ exports.assignTeacher = async (req, res) => {
   }
 };
 
-// Get assigned subjects with teachers for a grade and class
+// controllers/subjects.controller.js
+exports.getSubjectsByGrade = async (req, res) => {
+  try {
+    const { grade } = req.params;
+    const [rows] = await pool.query(
+      "SELECT id, name, grade FROM subjects WHERE grade = ? ORDER BY name",
+      [Number(grade)]
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error("MySQL error:", err);
+    res.status(500).json({ error: "Database error" });
+  }
+};
+
+
+// ✅ Get subjects + assigned teachers per class
 exports.getClassSubjects = async (req, res) => {
   const { grade, class_name } = req.query;
-
   if (!grade || !class_name) {
     return res.status(400).json({ error: "Grade and class_name are required" });
   }
@@ -85,7 +158,6 @@ exports.getClassSubjects = async (req, res) => {
        WHERE cst.grade = ? AND cst.class_name = ?`,
       [grade, class_name]
     );
-
     res.json(rows);
   } catch (err) {
     console.error("MySQL error:", err);
